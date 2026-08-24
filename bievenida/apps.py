@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class BievenidaConfig(AppConfig):
-    name = 'bievenida'
+class BienvenidaConfig(AppConfig):
+    name = 'bienvenida'
