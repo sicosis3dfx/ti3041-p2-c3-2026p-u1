@@ -16,6 +16,8 @@
 
             <li> {{producto.nombre}} - ${{ producto.precio }} </li>
 
+            {% empty %} <li>No hay nothing 🤣🤣</li>
+
         {% endfor %}
     </ul>
 
