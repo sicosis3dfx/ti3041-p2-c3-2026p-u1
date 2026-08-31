@@ -2,3 +2,4 @@
 Repositorio de clase a clase Backend INACAP Renca 2026 P
 
 python -m venv .venv
+pip install django
