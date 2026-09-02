@@ -1,0 +1,11 @@
+{% extends 'inventario/base.html' %}
+{% block title %}{{ contacto.nombre }} | Mis Contactos{% endblock %}
+{% block content %}
+<div class="panel">
+  <h1>{{ contacto.nombre }}</h1><p class="subtitle">Información de contacto</p>
+  <p class="contact-data">✉ <strong>Correo:</strong> {{ contacto.correo }}</p>
+  <p class="contact-data">☎ <strong>Teléfono:</strong> {{ contacto.telefono }}</p>
+  <p class="contact-data">⌂ <strong>Dirección:</strong> {{ contacto.direccion }}</p>
+  <div class="actions"><a class="button" href="{% url 'contacto_update' contacto.pk %}">Editar</a><a class="button danger" href="{% url 'contacto_delete' contacto.pk %}">Eliminar</a><a class="button secondary" href="{% url 'contacto_list' %}">Volver</a></div>
+</div>
+{% endblock %}

@@ -1,8 +1,13 @@
 from django.db import models
 
-# Create your models here.
-class Producto(models.Model):
-    nombre= models.CharField(max_length=64)
-    descripcion= models.CharField(max_length=128, blank=True,null=True)
-    precio= models.IntegerField(default=0)
-    stock= models.IntegerField(default=0)
+class Contacto(models.Model):
+    nombre = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=30)
+    correo = models.EmailField(max_length=254)
+    direccion = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre

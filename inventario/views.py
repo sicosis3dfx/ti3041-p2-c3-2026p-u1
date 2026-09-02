@@ -1,53 +1,52 @@
-from django.shortcuts import render, get_object_or_404, redirect 
-from .models import Producto 
-from .forms import ProductoForm 
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
 
-from django.views.decorators.csrf import csrf_protect
+from .forms import ContactoForm
+from .models import Contacto
 
-# READ (List) 
-def producto_list(request): 
-    productos = Producto.objects.all() 
-    return render(request, 'inventario/producto_list.html', 
-{'object_list': productos}) 
- 
-# READ (Detail) 
-def producto_detail(request, pk): 
-    producto = get_object_or_404(Producto, pk=pk) 
-    return render(request, 'inventario/producto_detail.html', 
-{'object': producto}) 
- 
-# CREATE 
-@csrf_protect
-def producto_create(request): 
-    if request.method == 'POST': 
-        form = ProductoForm(request.POST) 
-        if form.is_valid(): 
-            form.save() 
-            return redirect('producto_list') 
-    else: 
-        form = ProductoForm() 
-    return render(request, 'inventario/producto_form.html', {'form': 
-form}) 
- 
-# UPDATE 
-@csrf_protect
-def producto_update(request, pk): 
-    producto = get_object_or_404(Producto, pk=pk) 
-    if request.method == 'POST': 
-        form = ProductoForm(request.POST, instance=producto) 
 
-        if form.is_valid(): 
-            form.save() 
-            return redirect('producto_list') 
-    else: 
-        form = ProductoForm(instance=producto) 
-    return render(request, 'inventario/producto_form.html', {'form': form}) 
+def contacto_list(request):
+    query = request.GET.get('q', '').strip()
+    contactos = Contacto.objects.all()
+    if query:
+        contactos = contactos.filter(
+            Q(nombre__icontains=query) | Q(correo__icontains=query)
+        )
+    return render(request, 'inventario/contacto_list.html', {
+        'contactos': contactos,
+        'query': query,
+    })
 
-# DELETE
-@csrf_protect
-def producto_delete(request, pk): 
-    producto = get_object_or_404(Producto, pk=pk) 
-    if request.method == 'POST': 
-        producto.delete() 
-        return redirect('producto_list') 
-    return render(request, 'inventario/producto_confirm_delete.html', {'object': producto}) 
+
+def contacto_detail(request, pk):
+    contacto = get_object_or_404(Contacto, pk=pk)
+    return render(request, 'inventario/contacto_detail.html', {'contacto': contacto})
+
+
+def contacto_create(request):
+    form = ContactoForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('contacto_list')
+    return render(request, 'inventario/contacto_form.html', {'form': form, 'modo': 'Agregar'})
+
+
+def contacto_update(request, pk):
+    contacto = get_object_or_404(Contacto, pk=pk)
+    form = ContactoForm(request.POST or None, instance=contacto)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('contacto_detail', pk=contacto.pk)
+    return render(request, 'inventario/contacto_form.html', {
+        'form': form,
+        'modo': 'Editar',
+        'contacto': contacto,
+    })
+
+
+def contacto_delete(request, pk):
+    contacto = get_object_or_404(Contacto, pk=pk)
+    if request.method == 'POST':
+        contacto.delete()
+        return redirect('contacto_list')
+    return render(request, 'inventario/contacto_confirm_delete.html', {'contacto': contacto})
