@@ -32,9 +32,6 @@
       --radius-md: 16px;
       --radius-lg: 24px;
       --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }      --radius-md: 16px;
-      --radius-lg: 24px;
-      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,15 +49,18 @@
 
     /* Barra de Navegación */
     nav {
-      background: linear-gradient(135deg, #B8860B 0%, #004080 50%, #006d77 100%); /* blended dark yellow & dark cyan */
+      width: 100%;
+      background: linear-gradient(135deg, #B8860B 0%, #004080 50%, #006d77 100%);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(226, 232, 240, 0.8);
       position: sticky;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 100;
       box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
-      border-radius: 12px;
+      border-radius: 0;
     }
 
     .nav-inner {
@@ -484,6 +484,33 @@
       outline: none;
       border-color: var(--border-focus);
       box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Prefijo superpuesto para el teléfono (+56 9) */
+    .input-phone-group {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .input-phone-prefix {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 16px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 0.95rem;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .input-phone-group input {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
 
     .errorlist {

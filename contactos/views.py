@@ -5,65 +5,58 @@ from .forms import ContactoForm
 from .models import Contacto
 
 
+# Vista para listar contactos y buscar por nombre o correo
 def contacto_list(request):
-    """
-    Vista para listar los contactos y realizar búsquedas (Caso 3: Buscar contactos por nombre o correo).
-    - Captura el parámetro de consulta 'q' enviado por GET.
-    - Utiliza operadores de decisión (if) y el operador lógico OR (|) mediante objetos Q de Django.
-    """
+    # Capturamos lo que el usuario escribe en la barra de búsqueda (método GET)
     query = request.GET.get('q', '').strip()
     contactos = Contacto.objects.all()
 
-    # Estructura de decisión: si el usuario ingresó un término de búsqueda, filtramos
+    # Si hay texto en la búsqueda, filtramos los contactos
     if query:
-        # Operador lógico OR (|) para buscar coincidencias parciales (icontains) en nombre o correo
+        # Usamos Q con el operador | (OR) para buscar coincidencia en nombre o correo
+        # icontains busca sin importar mayúsculas o minúsculas
         contactos = contactos.filter(
             Q(nombre__icontains=query) | Q(correo__icontains=query)
         )
 
+    # Pasamos los contactos y el texto buscado al template
     return render(request, 'contactos/contacto_list.html', {
         'contactos': contactos,
         'query': query,
     })
 
 
+# Vista para ver los detalles de un contacto por su id
 def contacto_detail(request, pk):
-    """
-    Vista para consultar el detalle de un contacto específico por su Primary Key (ID).
-    Si no existe, devuelve una respuesta 404 de manera segura.
-    """
+    # Trae el contacto según su id; si no existe lanza error 404
     contacto = get_object_or_404(Contacto, pk=pk)
     return render(request, 'contactos/contacto_detail.html', {'contacto': contacto})
 
 
+# Vista para crear un nuevo contacto
 def contacto_create(request):
-    """
-    Vista para agregar un nuevo contacto personal (Caso 3: Agregar contactos).
-    - Maneja peticiones GET para renderizar el formulario vacío.
-    - Maneja peticiones POST para validar y persistir los datos en la base de datos.
-    """
+    # Si la petición es POST cargamos los datos enviados, sino iniciamos el formulario vacío
     form = ContactoForm(request.POST or None)
 
-    # Estructura de decisión: validar si la petición es POST y si los datos son válidos
+    # Validamos que sea método POST y que los datos ingresados sean válidos
     if request.method == 'POST' and form.is_valid():
         form.save()
+        # Una vez guardado volvemos a la lista principal
         return redirect('contacto_list')
 
     return render(request, 'contactos/contacto_form.html', {'form': form, 'modo': 'Agregar'})
 
 
+# Vista para editar los datos de un contacto existente
 def contacto_update(request, pk):
-    """
-    Vista para editar los datos de un contacto existente.
-    - Carga la instancia actual del contacto.
-    - Si se envía vía POST y pasa la validación, actualiza los datos y redirige al detalle.
-    """
     contacto = get_object_or_404(Contacto, pk=pk)
+    # Le pasamos la instancia para que el formulario venga con los datos actuales
     form = ContactoForm(request.POST or None, instance=contacto)
 
-    # Estructura de decisión para procesar la actualización
+    # Si se envían cambios válidos, se guardan en la base de datos
     if request.method == 'POST' and form.is_valid():
         form.save()
+        # Redirigimos a la vista de detalle de ese mismo contacto
         return redirect('contacto_detail', pk=contacto.pk)
 
     return render(request, 'contactos/contacto_form.html', {
@@ -73,17 +66,14 @@ def contacto_update(request, pk):
     })
 
 
+# Vista para borrar un contacto con confirmación
 def contacto_delete(request, pk):
-    """
-    Vista para eliminar un contacto con confirmación previa.
-    - GET: Muestra la pantalla de confirmación.
-    - POST: Confirma la eliminación y redirige al listado general.
-    """
     contacto = get_object_or_404(Contacto, pk=pk)
 
-    # Estructura de decisión: solo ejecuta el borrado si la petición es POST
+    # Solo eliminamos cuando el usuario confirma mediante POST
     if request.method == 'POST':
         contacto.delete()
         return redirect('contacto_list')
 
+    # Si es GET mostramos la plantilla que pregunta si está seguro
     return render(request, 'contactos/contacto_confirm_delete.html', {'contacto': contacto})

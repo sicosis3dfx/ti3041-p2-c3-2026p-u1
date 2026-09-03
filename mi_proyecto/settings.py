@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Registramos nuestra app contactos en el proyecto
     'contactos',
 ]
 
@@ -70,9 +71,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mi_proyecto.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
-
+# Base de datos: usamos SQLite para desarrollo local (guarda los datos en db.sqlite3)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

@@ -1,12 +1,9 @@
 from django.db import models
 
 
+# Modelo para guardar los contactos de la agenda
 class Contacto(models.Model):
-    """
-    Modelo que representa a un Contacto Personal (Caso 3: Agenda de Contactos Personal).
-    Almacena los datos requeridos: nombre, teléfono, correo electrónico y dirección.
-    """
-    # Identificación y datos de contacto según especificación
+    # Campos que nos pide el enunciado para cada contacto
     nombre = models.CharField(max_length=100, verbose_name="Nombre completo")
     telefono = models.CharField(max_length=30, verbose_name="Teléfono")
     correo = models.EmailField(max_length=254, verbose_name="Correo electrónico")
@@ -15,8 +12,9 @@ class Contacto(models.Model):
     class Meta:
         verbose_name = "Contacto"
         verbose_name_plural = "Contactos"
+        # Ordenamos la lista por nombre en orden alfabético
         ordering = ['nombre']
 
     def __str__(self):
-        """Representación textual del contacto en listas y panel de administración."""
+        # Para que al imprimir o mostrar el objeto se vea el nombre y no 'Contacto object (id)'
         return self.nombre
