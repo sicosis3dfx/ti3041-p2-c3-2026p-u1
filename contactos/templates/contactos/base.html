@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,17 +9,24 @@
   <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
-      --primary: #FFEB3B; /* pastel yellow */
---primary-hover: #FDD835; /* darker yellow */
---primary-gradient: linear-gradient(135deg, #FFEB3B 0%, #00B8D4 100%); /* yellow to cyan */
-  --icon-color: #4CAF50; /* muted green */
+      --primary: #FFEB3B;
+      /* pastel yellow */
+      --primary-hover: #FDD835;
+      /* darker yellow */
+      --primary-gradient: linear-gradient(135deg, #FFEB3B 0%, #00B8D4 100%);
+      /* yellow to cyan */
+      --icon-color: #4CAF50;
+      /* muted green */
       --surface: #ffffff;
       --surface-subtle: #f8fafc;
       --bg: #f1f5f9;
-      --dark: #001f3f; /* dark blue */
+      --dark: #001f3f;
+      /* dark blue */
       --text-main: #1e293b;
       --text-muted: #64748b;
       --border: #e2e8f0;
@@ -34,14 +42,18 @@
       --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       color: var(--text-main);
       background: radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-                  radial-gradient(circle at 85% 80%, rgba(217, 70, 239, 0.06) 0%, transparent 45%),
-                  var(--bg);
+        radial-gradient(circle at 85% 80%, rgba(217, 70, 239, 0.06) 0%, transparent 45%),
+        var(--bg);
       background-attachment: fixed;
       min-height: 100vh;
       line-height: 1.6;
@@ -81,9 +93,11 @@
       color: var(--surface);
       transition: var(--transition);
     }
+
     .brand:hover img {
-      transform: scale(1.05); border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+      transform: scale(1.05);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
 
     .brand-logo-icon {
@@ -239,7 +253,8 @@
     }
 
     /* Botones */
-    .button, button[type="submit"] {
+    .button,
+    button[type="submit"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -258,7 +273,8 @@
       box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
     }
 
-    .button:hover, button[type="submit"]:hover {
+    .button:hover,
+    button[type="submit"]:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
     }
@@ -551,19 +567,22 @@
         gap: 14px;
         align-items: flex-start;
       }
+
       .panel {
         padding: 24px;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- Encabezado con Logo y Navegación -->
   <nav>
     <div class="nav-inner">
-        <a class="brand" href="{% url 'contacto_list' %}">
-          <img src="{% static 'contactos/img/agenda_logo.jpg' %}" alt="Agenda Logo" style="width:64px;height:64px;object-fit:contain;border-radius:12px;" />
-          <div class="brand-text">Agenda <span>Contactos</span></div>
+      <a class="brand" href="{% url 'contacto_list' %}">
+        <img src="{% static 'contactos/img/agenda_logo.png' %}" alt="Agenda Logo"
+          style="width:64px;height:64px;object-fit:contain;border-radius:12px;" />
+        <div class="brand-text">Agenda <span>Contactos</span></div>
       </a>
       <div class="nav-links">
         <a class="nav-link" href="{% url 'contacto_list' %}">Mis Contactos</a>
@@ -576,5 +595,5 @@
     {% block content %}{% endblock %}
   </main>
 </body>
-</html>
 
+</html>
