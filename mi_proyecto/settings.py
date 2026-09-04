@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Registramos nuestra app contactos en el proyecto
-    'contactos',
+    'contactos', # Registramos nuestra app contactos en el proyecto
 ]
 
 MIDDLEWARE = [
