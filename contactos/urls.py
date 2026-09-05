@@ -13,4 +13,6 @@ urlpatterns = [
     path('contactos/<int:pk>/editar/', views.contacto_update, name='contacto_update'),
     # Confirmar y eliminar un contacto
     path('contactos/<int:pk>/eliminar/', views.contacto_delete, name='contacto_delete'),
+    # Confirmar y eliminar múltiples contactos seleccionados
+    path('contactos/eliminar-multiples/', views.contacto_bulk_delete, name='contacto_bulk_delete'),
 ]

@@ -132,4 +132,41 @@ class ContactoViewsTest(TestCase):
         self.assertRedirects(post_response, reverse('contacto_list'))
         self.assertFalse(Contacto.objects.filter(pk=self.contacto.pk).exists())
 
+    def test_contacto_bulk_delete_get_redirects(self):
+        # Acceder por GET directo a bulk_delete debe redirigir a la lista
+        response = self.client.get(reverse('contacto_bulk_delete'))
+        self.assertRedirects(response, reverse('contacto_list'))
+
+    def test_contacto_bulk_delete_empty_selection_redirects(self):
+        # Enviar POST sin selección debe redirigir a la lista sin borrar nada
+        response = self.client.post(reverse('contacto_bulk_delete'), data={'selected_ids': []})
+        self.assertRedirects(response, reverse('contacto_list'))
+        self.assertEqual(Contacto.objects.count(), 2)
+
+    def test_contacto_bulk_delete_shows_confirmation(self):
+        # Enviar POST con IDs debe mostrar la pantalla de confirmación con los nombres
+        response = self.client.post(
+            reverse('contacto_bulk_delete'),
+            data={'selected_ids': [self.contacto.pk, self.contacto2.pk]}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "¿Eliminar 2 contactos?")
+        self.assertContains(response, self.contacto.nombre)
+        self.assertContains(response, self.contacto2.nombre)
+
+    def test_contacto_bulk_delete_confirmed_deletes_records(self):
+        # Enviar confirmación definitiva debe borrar los registros seleccionados
+        response = self.client.post(
+            reverse('contacto_bulk_delete'),
+            data={
+                'selected_ids': [self.contacto.pk, self.contacto2.pk],
+                'confirmar': '1',
+            }
+        )
+        self.assertRedirects(response, reverse('contacto_list'))
+        # Ambos contactos fueron eliminados
+        self.assertFalse(Contacto.objects.filter(pk=self.contacto.pk).exists())
+        self.assertFalse(Contacto.objects.filter(pk=self.contacto2.pk).exists())
+        self.assertEqual(Contacto.objects.count(), 0)
+
 

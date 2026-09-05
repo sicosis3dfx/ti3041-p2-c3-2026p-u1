@@ -77,3 +77,31 @@ def contacto_delete(request, pk):
 
     # Si es GET mostramos la plantilla que pregunta si está seguro
     return render(request, 'contactos/contacto_confirm_delete.html', {'contacto': contacto})
+
+
+# Vista para borrar múltiples contactos con confirmación previa
+def contacto_bulk_delete(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_ids')
+
+        # Si no se seleccionó ningún contacto, volvemos a la lista principal
+        if not selected_ids:
+            return redirect('contacto_list')
+
+        # Si el usuario ya confirmó la eliminación masiva
+        if request.POST.get('confirmar') == '1':
+            Contacto.objects.filter(pk__in=selected_ids).delete()
+            return redirect('contacto_list')
+
+        # Si aún no confirma, traemos los contactos para mostrarlos en la pantalla de confirmación
+        contactos = Contacto.objects.filter(pk__in=selected_ids)
+        if not contactos.exists():
+            return redirect('contacto_list')
+
+        return render(request, 'contactos/contacto_bulk_confirm_delete.html', {
+            'contactos': contactos,
+            'selected_ids': selected_ids,
+        })
+
+    # Si se intenta acceder por GET directo, redirigimos a la lista
+    return redirect('contacto_list')
