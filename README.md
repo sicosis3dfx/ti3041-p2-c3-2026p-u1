@@ -2,7 +2,9 @@
 Repositorio de clase a clase Backend INACAP Renca 2026 
 
 python -m venv .venv
+pip install -r requirements.txt
 pip install django
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
+
