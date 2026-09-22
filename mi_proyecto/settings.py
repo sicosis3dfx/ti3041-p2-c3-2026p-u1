@@ -83,7 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mi_proyecto.wsgi.application'
 
 
-# Base de datos: usamos SQLite para desarrollo local (guarda los datos en db.sqlite3)
+# Base de datos: 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
