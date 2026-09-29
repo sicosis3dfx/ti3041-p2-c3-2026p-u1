@@ -559,12 +559,12 @@
       font-weight: 600 !important;
     }
 
-    /* Barra de Búsqueda (#toolbar) más amplia y alineada */
+    /* Barra de Búsqueda (#toolbar) estilizada y compacta */
     #toolbar {
       background: var(--admin-card-bg) !important;
       border: 1px solid var(--admin-table-border) !important;
       border-radius: 10px !important;
-      padding: 12px 18px !important;
+      padding: 8px 16px !important;
       margin-bottom: 14px !important;
       box-shadow: var(--admin-card-shadow) !important;
     }
@@ -577,16 +577,37 @@
     }
 
     #changelist-search input[type="text"] {
-      min-width: 320px !important;
-      height: 40px !important;
+      min-width: 300px !important;
+      height: 35px !important;
+      padding: 6px 12px !important;
+      font-size: 0.9rem !important;
     }
 
     #changelist-search input[type="submit"] {
-      height: 40px !important;
-      padding: 0 20px !important;
+      height: 35px !important;
+      padding: 0 18px !important;
+      font-size: 0.88rem !important;
+    }
+
+    /* Texto de resultados encontrados más visible a la derecha del buscador */
+    #changelist-search .small.quiet,
+    #changelist-search span.small,
+    #changelist-search span.quiet {
+      font-size: 0.98rem !important;
+      font-weight: 600 !important;
+      color: var(--admin-text-main) !important;
+      margin-left: 8px !important;
+    }
+
+    #changelist-search .small.quiet a,
+    #changelist-search span a {
+      color: var(--admin-btn-primary) !important;
+      text-decoration: underline !important;
+      font-weight: 700 !important;
     }
 
     /* Ocultar la ficha técnica criptográfica del hash en la edición de usuario */
+    #id_password > p:not(:last-child),
     #id_password > p:first-of-type,
     .field-password #id_password p:has(bdi) {
       display: none !important;
