@@ -1,0 +1,31 @@
+{% load i18n %}
+<div class="actions">
+  {% block actions %}
+    {% block actions-form %}
+    {% for field in action_form %}
+      {% if field.label %}
+        <label>Acción: {{ field }}</label>
+      {% else %}
+        {{ field }}
+      {% endif %}
+    {% endfor %}
+    {% endblock %}
+
+    {% block actions-submit %}
+    <button type="submit" class="button" title="Ejecutar la acción seleccionada" name="index" value="{{ action_index|default:0 }}">Ejecutar</button>
+    {% endblock %}
+
+    {% block actions-counter %}
+    {% if actions_selection_counter %}
+        <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}" aria-live="polite" aria-atomic="true">{{ selection_note }}</span>
+        {% if cl.result_count != cl.result_list|length %}
+        <span class="all hidden">{{ selection_note_all }}</span>
+        <span class="question hidden">
+            <a role="button" href="#">Seleccionar todos los {{ cl.result_count }} contactos</a>
+        </span>
+        <span class="clear hidden"><a role="button" href="#">Limpiar selección</a></span>
+        {% endif %}
+    {% endif %}
+    {% endblock %}
+  {% endblock %}
+</div>

@@ -1,0 +1,666 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:'Agenda Contactos Admin' }}
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <!-- Google Fonts: Outfit y Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       SISTEMA DE DISEÑO RESPONSIVO Y SOPORTE REAL MODO OSCURO
+       ========================================================= */
+
+    /* 1. MODO CLARO (Default) */
+    :root, html[data-theme="light"] {
+      --admin-header-bg: linear-gradient(135deg, #0f3460 0%, #004d7a 50%, #006874 100%);
+      --admin-header-border: rgba(255, 235, 59, 0.35);
+      --admin-header-text: #ffffff;
+      --admin-breadcrumbs-bg: #09203f;
+      --admin-breadcrumbs-text: #94a3b8;
+      --admin-breadcrumbs-link: #f1f5f9;
+
+      --admin-body-bg: #f8fafc;
+      --admin-card-bg: #ffffff;
+      --admin-card-border: #e2e8f0;
+      --admin-card-header: linear-gradient(135deg, #0f3460 0%, #006874 100%);
+      --admin-card-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+
+      --admin-table-th: #f1f5f9;
+      --admin-table-th-fg: #1e293b;
+      --admin-table-border: #e2e8f0;
+      --admin-row-hover: #f0f7ff;
+      --admin-text-main: #1e293b;
+      --admin-text-muted: #64748b;
+
+      --admin-btn-primary: #004d7a;
+      --admin-btn-primary-hover: #003657;
+
+      --admin-phone-fg: #0f766e;
+      --admin-phone-bg: #ccfbf1;
+      --admin-phone-border: #99f6e4;
+
+      --admin-email-fg: #1d4ed8;
+      --admin-email-bg: #dbeafe;
+      --admin-email-border: #bfdbfe;
+    }
+
+    /* 2. MODO OSCURO (Django data-theme="dark") */
+    html[data-theme="dark"] {
+      --admin-header-bg: linear-gradient(135deg, #0a1118 0%, #111e2e 50%, #132738 100%);
+      --admin-header-border: rgba(255, 255, 255, 0.1);
+      --admin-header-text: #f1f5f9;
+      --admin-breadcrumbs-bg: #070d14;
+      --admin-breadcrumbs-text: #64748b;
+      --admin-breadcrumbs-link: #94a3b8;
+
+      --admin-body-bg: #0b0f17;
+      --admin-card-bg: #141c2b;
+      --admin-card-border: #233247;
+      --admin-card-header: linear-gradient(135deg, #18263a 0%, #1e354d 100%);
+      --admin-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+      --admin-table-th: #182436;
+      --admin-table-th-fg: #f1f5f9;
+      --admin-table-border: #233247;
+      --admin-row-hover: #1c2b42;
+      --admin-text-main: #f1f5f9;
+      --admin-text-muted: #94a3b8;
+
+      --admin-btn-primary: #0284c7;
+      --admin-btn-primary-hover: #0369a1;
+
+      --admin-phone-fg: #2dd4bf;
+      --admin-phone-bg: rgba(45, 212, 191, 0.12);
+      --admin-phone-border: rgba(45, 212, 191, 0.3);
+
+      --admin-email-fg: #60a5fa;
+      --admin-email-bg: rgba(96, 165, 250, 0.12);
+      --admin-email-border: rgba(96, 165, 250, 0.3);
+    }
+
+    /* Soporte para modo oscuro automático de sistema */
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) {
+        --admin-header-bg: linear-gradient(135deg, #0a1118 0%, #111e2e 50%, #132738 100%);
+        --admin-header-border: rgba(255, 255, 255, 0.1);
+        --admin-header-text: #f1f5f9;
+        --admin-breadcrumbs-bg: #070d14;
+        --admin-breadcrumbs-text: #64748b;
+        --admin-breadcrumbs-link: #94a3b8;
+
+        --admin-body-bg: #0b0f17;
+        --admin-card-bg: #141c2b;
+        --admin-card-border: #233247;
+        --admin-card-header: linear-gradient(135deg, #18263a 0%, #1e354d 100%);
+        --admin-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+        --admin-table-th: #182436;
+        --admin-table-th-fg: #f1f5f9;
+        --admin-table-border: #233247;
+        --admin-row-hover: #1c2b42;
+        --admin-text-main: #f1f5f9;
+        --admin-text-muted: #94a3b8;
+
+        --admin-btn-primary: #0284c7;
+        --admin-btn-primary-hover: #0369a1;
+
+        --admin-phone-fg: #2dd4bf;
+        --admin-phone-bg: rgba(45, 212, 191, 0.12);
+        --admin-phone-border: rgba(45, 212, 191, 0.3);
+
+        --admin-email-fg: #60a5fa;
+        --admin-email-bg: rgba(96, 165, 250, 0.12);
+        --admin-email-border: rgba(96, 165, 250, 0.3);
+      }
+    }
+
+    /* Tipografía Global */
+    body, input, textarea, select, button {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    }
+    h1, h2, h3, .module h2, #branding h1 {
+      font-family: 'Outfit', sans-serif !important;
+      letter-spacing: -0.02em;
+    }
+
+    /* Header Principal */
+    #header {
+      background: var(--admin-header-bg) !important;
+      color: var(--admin-header-text) !important;
+      border-bottom: 2px solid var(--admin-header-border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      padding: 12px 24px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    #branding {
+      display: flex;
+      align-items: center;
+    }
+
+    #branding a {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ffffff !important;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+
+    #branding a:hover {
+      transform: scale(1.02);
+    }
+
+    #branding img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 3px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #branding h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff !important;
+    }
+
+    /* Barra de Herramientas de Usuario (#user-tools) */
+    #user-tools {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      font-size: 0.88rem !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: right;
+    }
+
+    #user-tools a {
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s ease;
+    }
+
+    #user-tools a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* Botón refinado para ir a la Agenda Pública */
+    .admin-public-link {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      background: rgba(255, 255, 255, 0.16) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      color: #ffffff !important;
+      padding: 6px 14px !important;
+      border-radius: 8px !important;
+      font-size: 0.84rem !important;
+      font-weight: 600 !important;
+      text-decoration: none !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .admin-public-link:hover {
+      background: rgba(255, 255, 255, 0.28) !important;
+      border-color: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Botón de Cerrar Sesión */
+    #logout-form {
+      display: inline !important;
+      margin: 0 !important;
+    }
+
+    #logout-form button {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border: 1px solid rgba(239, 68, 68, 0.4) !important;
+      color: #fecaca !important;
+      padding: 5px 12px !important;
+      border-radius: 6px !important;
+      font-size: 0.82rem !important;
+      font-weight: 600 !important;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #logout-form button:hover {
+      background: #ef4444 !important;
+      color: #ffffff !important;
+      border-color: #ef4444 !important;
+    }
+
+    /* Botón de Alternar Modo Claro / Oscuro Inverso */
+    .theme-switch-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      padding: 6px 14px !important;
+      border-radius: 8px !important;
+      background: rgba(255, 255, 255, 0.16) !important;
+      border: 1px solid rgba(255, 255, 255, 0.28) !important;
+      color: #ffffff !important;
+      font-size: 0.84rem !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      margin-left: 6px !important;
+      vertical-align: middle !important;
+      user-select: none !important;
+    }
+
+    .theme-switch-btn:hover {
+      background: rgba(255, 255, 255, 0.28) !important;
+      border-color: #ffffff !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    /* MODO CLARO: El botón ofrece cambiar a MODO OSCURO con una Luna */
+    html[data-theme="light"] .theme-switch-icon::before {
+      content: "🌙";
+      font-size: 0.95rem;
+    }
+    html[data-theme="light"] .theme-switch-text::before {
+      content: "Modo Oscuro";
+    }
+
+    /* MODO OSCURO: El botón ofrece cambiar a MODO CLARO con un Sol */
+    html[data-theme="dark"] .theme-switch-icon::before {
+      content: "☀️";
+      font-size: 0.95rem;
+    }
+    html[data-theme="dark"] .theme-switch-text::before {
+      content: "Modo Claro";
+    }
+
+    /* Soporte cuando aún no hay data-theme explícito */
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
+        content: "☀️";
+        font-size: 0.95rem;
+      }
+      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
+        content: "Modo Claro";
+      }
+    }
+    @media (prefers-color-scheme: light) {
+      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-icon::before {
+        content: "🌙";
+        font-size: 0.95rem;
+      }
+      html:not([data-theme="light"]):not([data-theme="dark"]) .theme-switch-text::before {
+        content: "Modo Oscuro";
+      }
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      background: var(--admin-breadcrumbs-bg) !important;
+      color: var(--admin-breadcrumbs-text) !important;
+      padding: 10px 24px !important;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--admin-card-border);
+    }
+
+    .breadcrumbs a {
+      color: var(--admin-breadcrumbs-link) !important;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tarjetas de Módulos */
+    .module {
+      background: var(--admin-card-bg) !important;
+      border: 1px solid var(--admin-card-border) !important;
+      border-radius: 12px !important;
+      box-shadow: var(--admin-card-shadow) !important;
+      overflow: hidden;
+      margin-bottom: 24px !important;
+    }
+
+    .module h2, .module caption {
+      background: var(--admin-card-header) !important;
+      color: #ffffff !important;
+      padding: 12px 18px !important;
+      font-size: 1.05rem !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.01em;
+    }
+
+    /* Tablas y Listados */
+    #changelist table {
+      background: var(--admin-card-bg) !important;
+      border-radius: 10px;
+      overflow: hidden;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--admin-table-border);
+    }
+
+    #changelist thead th {
+      background: var(--admin-table-th) !important;
+      color: var(--admin-table-th-fg) !important;
+      font-weight: 700;
+      padding: 12px 14px !important;
+      border-bottom: 2px solid var(--admin-table-border) !important;
+      font-size: 0.88rem;
+    }
+
+    #changelist thead th a {
+      color: var(--admin-table-th-fg) !important;
+    }
+
+    #changelist tbody td {
+      padding: 12px 14px !important;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--admin-table-border) !important;
+      color: var(--admin-text-main) !important;
+      font-size: 0.92rem;
+    }
+
+    #changelist tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    #changelist tbody tr:hover {
+      background: var(--admin-row-hover) !important;
+    }
+
+    /* Badges de Contacto (Teléfono y Correo adaptables) */
+    .badge-telefono {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: var(--admin-phone-bg);
+      color: var(--admin-phone-fg) !important;
+      border: 1px solid var(--admin-phone-border);
+      font-weight: 600;
+      font-size: 0.86rem;
+      text-decoration: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .badge-telefono:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-correo {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: var(--admin-email-bg);
+      color: var(--admin-email-fg) !important;
+      border: 1px solid var(--admin-email-border);
+      font-weight: 500;
+      font-size: 0.86rem;
+      text-decoration: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .badge-correo:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Botones de acción y formularios */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      padding: 9px 18px !important;
+      font-size: 0.88rem !important;
+      transition: all 0.2s ease !important;
+      border: none !important;
+      cursor: pointer;
+      text-transform: none !important;
+    }
+
+    .button.default, input[type=submit].default, .submit-row input.default {
+      background: var(--admin-btn-primary) !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+      background: var(--admin-btn-primary-hover) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Buscador y campos de texto */
+    #searchbar, input[type=text], input[type=email], input[type=password], select {
+      background: var(--admin-card-bg) !important;
+      color: var(--admin-text-main) !important;
+      border: 1px solid var(--admin-card-border) !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #searchbar:focus, input:focus, select:focus {
+      border-color: var(--admin-btn-primary) !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+      outline: none;
+    }
+
+    /* =========================================================
+       BARRA DE ACCIONES (Action: / Acciones de la tabla)
+       ========================================================= */
+    .actions {
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+      flex-wrap: wrap !important;
+      padding: 14px 20px !important;
+      background: var(--admin-card-bg) !important;
+      border: 1px solid var(--admin-table-border) !important;
+      border-radius: 10px !important;
+      margin-bottom: 16px !important;
+      box-shadow: var(--admin-card-shadow) !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+
+    .actions label {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      font-size: 0.92rem !important;
+      font-weight: 600 !important;
+      color: var(--admin-text-main) !important;
+      margin: 0 !important;
+    }
+
+    /* Menú desplegable Action: mucho más ancho para leer opciones largas cómodamente */
+    .actions select {
+      min-width: 360px !important;
+      max-width: 520px !important;
+      height: 42px !important;
+      padding: 6px 14px !important;
+      font-size: 0.92rem !important;
+      font-weight: 500 !important;
+      border-radius: 8px !important;
+      background: var(--admin-card-bg) !important;
+      color: var(--admin-text-main) !important;
+      border: 1px solid var(--admin-card-border) !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .actions select:focus {
+      border-color: var(--admin-btn-primary) !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25) !important;
+      outline: none !important;
+    }
+
+    /* Botón "Ir" / "Go" de ejecutar acción */
+    .actions .button, .actions button[type="submit"] {
+      height: 42px !important;
+      padding: 0 24px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 0.92rem !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+      background: var(--admin-btn-primary) !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+      cursor: pointer !important;
+      border: none !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .actions .button:hover, .actions button[type="submit"]:hover {
+      background: var(--admin-btn-primary-hover) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    /* Contador de seleccionados */
+    .actions .action-counter {
+      font-size: 0.88rem !important;
+      color: var(--admin-text-muted) !important;
+      font-weight: 500 !important;
+      margin-left: 8px !important;
+    }
+
+    .actions span.all, .actions span.clear, .actions span.question {
+      font-size: 0.88rem !important;
+      color: var(--admin-btn-primary) !important;
+      font-weight: 600 !important;
+    }
+
+    /* Barra de Búsqueda (#toolbar) más amplia y alineada */
+    #toolbar {
+      background: var(--admin-card-bg) !important;
+      border: 1px solid var(--admin-table-border) !important;
+      border-radius: 10px !important;
+      padding: 12px 18px !important;
+      margin-bottom: 14px !important;
+      box-shadow: var(--admin-card-shadow) !important;
+    }
+
+    #changelist-search {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      flex-wrap: wrap !important;
+    }
+
+    #changelist-search input[type="text"] {
+      min-width: 320px !important;
+      height: 40px !important;
+    }
+
+    #changelist-search input[type="submit"] {
+      height: 40px !important;
+      padding: 0 20px !important;
+    }
+  </style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <img src="{% static 'contactos/img/agenda_logo.png' %}" alt="Logo Agenda" />
+    <h1>{{ site_header|default:'Agenda de Contactos' }}</h1>
+  </a>
+</div>
+{% endblock %}
+
+{% block usertools %}
+{% if has_permission %}
+<div id="user-tools">
+  <a href="{% url 'contacto_list' %}" class="admin-public-link" target="_blank" title="Abrir agenda pública en nueva pestaña">
+    🌐 Ver Agenda Pública ↗
+  </a>
+
+  <span style="opacity: 0.3; margin: 0 2px;">|</span>
+
+  {% block welcome-msg %}
+    <span>Hola, <strong>{% firstof user.get_short_name user.get_username %}</strong></span>
+  {% endblock %}
+
+  <span style="opacity: 0.3; margin: 0 2px;">|</span>
+
+  {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">Contraseña</a>
+    <span style="opacity: 0.3; margin: 0 2px;">|</span>
+  {% endif %}
+
+  <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit">Salir</button>
+  </form>
+
+  <button id="custom-theme-btn" type="button" class="theme-switch-btn" title="Alternar modo claro / oscuro">
+    <span class="theme-switch-icon"></span>
+    <span class="theme-switch-text"></span>
+  </button>
+</div>
+{% endif %}
+{% endblock %}
+
+{# Dejamos limpio nav-global para que no haya elementos flotando fuera de lugar #}
+{% block nav-global %}{% endblock %}
+
+{% block extrabody %}
+  {{ block.super }}
+  <script>
+    (function () {
+      function initCustomThemeToggle() {
+        const btn = document.getElementById("custom-theme-btn");
+        if (!btn) return;
+
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          const html = document.documentElement;
+          // Determina si actualmente está oscuro
+          const isDark =
+            html.dataset.theme === "dark" ||
+            (!html.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches) ||
+            (html.dataset.theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+          const newTheme = isDark ? "light" : "dark";
+          html.dataset.theme = newTheme;
+          localStorage.setItem("theme", newTheme);
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initCustomThemeToggle);
+      } else {
+        initCustomThemeToggle();
+      }
+    })();
+  </script>
+{% endblock extrabody %}
