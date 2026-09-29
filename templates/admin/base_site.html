@@ -587,8 +587,12 @@
     }
 
     /* Ocultar la ficha técnica criptográfica del hash en la edición de usuario */
+    #id_password > p:not(:last-child),
+    #id_password > p:first-child,
     #id_password > p:first-of-type,
-    .field-password #id_password p:has(bdi) {
+    .field-password #id_password > p:not(:last-child),
+    .field-password #id_password > p:first-child,
+    .field-password #id_password > p:first-of-type {
       display: none !important;
     }
     #id_password {
@@ -676,10 +680,26 @@
         });
       }
 
+      function hidePasswordHash() {
+        const pwdBox = document.getElementById("id_password");
+        if (pwdBox) {
+          const paragraphs = pwdBox.querySelectorAll("p");
+          paragraphs.forEach(function (p) {
+            if (p.textContent.includes("algoritmo") || p.textContent.includes("pbkdf2") || p.textContent.includes("iteraciones")) {
+              p.style.display = "none";
+            }
+          });
+        }
+      }
+
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initCustomThemeToggle);
+        document.addEventListener("DOMContentLoaded", function () {
+          initCustomThemeToggle();
+          hidePasswordHash();
+        });
       } else {
         initCustomThemeToggle();
+        hidePasswordHash();
       }
     })();
   </script>
