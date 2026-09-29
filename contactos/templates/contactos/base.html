@@ -654,6 +654,129 @@
       margin-bottom: 20px;
     }
 
+    /* Mensajes Flash y Alertas */
+    .messages-container {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+      animation: fadeInSlideDown 0.25s ease-out;
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-info {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    .alert-close {
+      background: transparent !important;
+      border: none !important;
+      color: currentColor !important;
+      font-size: 1.3rem !important;
+      cursor: pointer;
+      opacity: 0.6;
+      padding: 0 4px !important;
+      line-height: 1;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: opacity 0.15s ease;
+    }
+
+    .alert-close:hover {
+      opacity: 1;
+    }
+
+    /* Paginación */
+    .pagination-wrapper {
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pagination-info {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 0 10px;
+    }
+
+    .page-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .page-btn:hover {
+      border-color: #cbd5e1;
+      background: var(--surface-subtle);
+      transform: translateY(-2px);
+    }
+
+    .page-btn.active {
+      background: var(--primary-gradient);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+
+    .page-btn.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
     @media (max-width: 640px) {
       .nav-inner {
         flex-direction: column;
@@ -685,6 +808,25 @@
   </nav>
 
   <main>
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% elif message.tags == 'info' %}info{% else %}success{% endif %}">
+        <div class="alert-content">
+          <span>
+            {% if message.tags == 'error' %}❌
+            {% elif message.tags == 'warning' %}⚠️
+            {% elif message.tags == 'info' %}ℹ️
+            {% else %}✅{% endif %}
+          </span>
+          <span>{{ message }}</span>
+        </div>
+        <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Cerrar">&times;</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
   </main>
 </body>

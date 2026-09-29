@@ -1,3 +1,4 @@
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
@@ -168,5 +169,39 @@ class ContactoViewsTest(TestCase):
         self.assertFalse(Contacto.objects.filter(pk=self.contacto.pk).exists())
         self.assertFalse(Contacto.objects.filter(pk=self.contacto2.pk).exists())
         self.assertEqual(Contacto.objects.count(), 0)
+
+    def test_contacto_create_muestra_mensaje_flash(self):
+        # Probamos que al crear un contacto se genere un mensaje de feedback (messages.success)
+        datos = {
+            'nombre': 'Valeria Diaz',
+            'telefono': '+56 9 3333 4444',
+            'correo': 'valeria@correo.com',
+            'direccion': 'Calle Central 555',
+        }
+        response = self.client.post(reverse('contacto_create'), data=datos, follow=True)
+        self.assertEqual(response.status_code, 200)
+        messages_list = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("creado exitosamente" in str(m) for m in messages_list))
+
+    def test_contacto_list_paginacion(self):
+        # Creamos 7 contactos adicionales para superar el límite de 8 por página (2 existentes + 7 = 9)
+        for i in range(7):
+            Contacto.objects.create(
+                nombre=f"Contacto Extra {i:02d}",
+                telefono="+56 9 1000 2000",
+                correo=f"extra{i}@test.com",
+                direccion="Calle Falsa 123",
+            )
+        # Página 1 debe tener 8 contactos y enlace a página 2
+        response_p1 = self.client.get(reverse('contacto_list'))
+        self.assertEqual(response_p1.status_code, 200)
+        self.assertEqual(len(response_p1.context['contactos']), 8)
+        self.assertContains(response_p1, "Página 1 de 2")
+
+        # Página 2 debe tener 1 contacto restante
+        response_p2 = self.client.get(reverse('contacto_list'), {'page': 2})
+        self.assertEqual(response_p2.status_code, 200)
+        self.assertEqual(len(response_p2.context['contactos']), 1)
+        self.assertContains(response_p2, "Página 2 de 2")
 
 

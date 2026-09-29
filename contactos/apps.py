@@ -6,3 +6,8 @@ class ContactosConfig(AppConfig):
     name = 'contactos'
     verbose_name = 'Agenda de Contactos'
 
+    def ready(self):
+        # Estandarizamos en español la etiqueta por defecto de los selects en Django
+        from django.db.models import fields
+        fields.BLANK_CHOICE_LABEL = "- Selecciona una opción -"
+
