@@ -1,22 +1,27 @@
 import csv
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.http import HttpResponse
 from django.utils.html import format_html
+from django.contrib.admin.actions import delete_selected
 
 from .forms import ContactoForm
 from .models import Contacto
 
-from django.contrib.admin.actions import delete_selected
-
-# Personalización de títulos del panel de administración
+# ==============================================================================
+# 1. Branding del Panel de Administración (Clase 02U2 - Sección 7)
+# ==============================================================================
 admin.site.site_header = "Agenda de Contactos - Panel de Control"
 admin.site.site_title = "Agenda Contactos Admin"
 admin.site.index_title = "Gestión y Administración de Contactos"
 
-# Texto en español para la acción de borrado masivo por defecto
+# Personalización del texto para la acción por defecto de borrado
 delete_selected.short_description = "🗑️ Eliminar contactos seleccionados"
 
 
+# ==============================================================================
+# 2. Acciones Masivas Personalizadas (Clase 02U2 - Sección 3)
+# ==============================================================================
 @admin.action(description="📥 Exportar contactos seleccionados a CSV")
 def exportar_contactos_csv(modeladmin, request, queryset):
     """Acción masiva para descargar contactos en archivo CSV compatible con Excel."""
@@ -31,26 +36,133 @@ def exportar_contactos_csv(modeladmin, request, queryset):
     return response
 
 
+@admin.action(description="✨ Estandarizar nombres seleccionados (Mayúscula inicial)")
+def estandarizar_nombres(modeladmin, request, queryset):
+    """
+    Acción masiva que estandariza la capitalización de los nombres seleccionados
+    y notifica al usuario con un mensaje en el panel.
+    """
+    actualizados = 0
+    for contacto in queryset:
+        nombre_limpio = ' '.join(contacto.nombre.strip().split()).title()
+        if contacto.nombre != nombre_limpio:
+            contacto.nombre = nombre_limpio
+            contacto.save(update_fields=['nombre'])
+            actualizados += 1
+
+    modeladmin.message_user(
+        request,
+        f"Se han estandarizado los nombres de {actualizados} contacto(s) correctamente."
+    )
+
+
+# ==============================================================================
+# 3. Filtros Avanzados Personalizados (Clase 02U2 - Sección 4)
+# ==============================================================================
+class ProveedorCorreoFilter(SimpleListFilter):
+    """Filtro avanzado lateral para clasificar contactos según su proveedor de correo electrónico."""
+    title = 'Proveedor de correo'
+    parameter_name = 'proveedor'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('gmail', 'Gmail (@gmail.com)'),
+            ('inacap', 'Institucional INACAP (@inacap.cl / @inacapmail.cl)'),
+            ('outlook', 'Microsoft / Outlook / Hotmail'),
+            ('otros', 'Otros proveedores'),
+        )
+
+    def queryset(self, request, queryset):
+        val = self.value()
+        if val == 'gmail':
+            return queryset.filter(correo__icontains='@gmail.com')
+        if val == 'inacap':
+            return queryset.filter(correo__icontains='@inacap.cl') | queryset.filter(correo__icontains='@inacapmail.cl')
+        if val == 'outlook':
+            return queryset.filter(correo__icontains='@outlook.') | queryset.filter(correo__icontains='@hotmail.')
+        if val == 'otros':
+            return queryset.exclude(
+                correo__icontains='@gmail.com'
+            ).exclude(
+                correo__icontains='@inacap'
+            ).exclude(
+                correo__icontains='@outlook.'
+            ).exclude(
+                correo__icontains='@hotmail.'
+            )
+        return queryset
+
+
+# ==============================================================================
+# 4. Configuración Principal del Modelo en Admin (Clase 02U2 - Secciones 2, 5 y 6)
+# ==============================================================================
 @admin.register(Contacto)
 class ContactoAdmin(admin.ModelAdmin):
-    # Formulario con validaciones de teléfono chileno y correo
+    # Formulario personalizado con validaciones específicas
     form = ContactoForm
 
-    # Columnas con enlaces interactivos
+    # Visualización en lista
     list_display = ('nombre', 'enlace_telefono', 'enlace_correo', 'direccion')
 
-    # Búsqueda simultánea
+    # Búsqueda rápida por múltiples campos
     search_fields = ('nombre', 'correo', 'telefono')
 
-    # Orden predeterminado
+    # Filtros laterales (incluyendo el SimpleListFilter personalizado)
+    list_filter = (ProveedorCorreoFilter,)
+
+    # Ordenamiento por defecto
     ordering = ('nombre',)
 
     # Paginación
     list_per_page = 20
 
-    # Acciones masivas
-    actions = [exportar_contactos_csv]
+    # Acciones masivas registradas
+    actions = [exportar_contactos_csv, estandarizar_nombres]
 
+    # Agrupación visual de campos en secciones (Fieldsets & UX)
+    fieldsets = (
+        ('Información Personal', {
+            'fields': ('nombre',),
+            'description': 'Datos principales de identificación del contacto.',
+        }),
+        ('Canales de Comunicación', {
+            'fields': ('telefono', 'correo'),
+            'description': 'Canales directos para establecer contacto telefónico o digital.',
+        }),
+        ('Ubicación y Domicilio', {
+            'fields': ('direccion',),
+            'classes': ('collapse',),
+            'description': 'Información física del contacto (sección colapsable).',
+        }),
+    )
+
+    # Lógica de guardado y auditoría desde el admin
+    def save_model(self, request, obj, form, change):
+        """Limpia espacios en blanco antes de guardar el modelo desde el Admin."""
+        if obj.nombre:
+            obj.nombre = ' '.join(obj.nombre.strip().split())
+        if obj.direccion:
+            obj.direccion = ' '.join(obj.direccion.strip().split())
+        super().save_model(request, obj, form, change)
+
+    # Control de permisos por rol
+    def has_delete_permission(self, request, obj=None):
+        """Solo los superusuarios tienen permiso para eliminar contactos desde el panel."""
+        return bool(request.user and request.user.is_superuser)
+
+    # Personalización en español de las opciones del menú de acciones
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            func, name, _ = actions['delete_selected']
+            actions['delete_selected'] = (func, name, "🗑️ Eliminar contactos seleccionados")
+        return actions
+
+    def get_action_choices(self, request, default_choices=None):
+        default_choices = [("", "- Selecciona una opción -")]
+        return super().get_action_choices(request, default_choices=default_choices)
+
+    # Decoradores de visualización interactiva
     @admin.display(description="Teléfono", ordering='telefono')
     def enlace_telefono(self, obj):
         if not obj.telefono:
