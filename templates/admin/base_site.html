@@ -559,55 +559,96 @@
       font-weight: 600 !important;
     }
 
-    /* Barra de Búsqueda (#toolbar) estilizada y compacta */
+    /* Barra de Búsqueda (#toolbar) esbelta y compacta */
     #toolbar {
       background: var(--admin-card-bg) !important;
       border: 1px solid var(--admin-table-border) !important;
-      border-radius: 10px !important;
-      padding: 8px 16px !important;
+      border-radius: 8px !important;
+      padding: 8px 14px !important;
       margin-bottom: 14px !important;
       box-shadow: var(--admin-card-shadow) !important;
     }
 
-    #changelist-search {
+    #changelist-search > div {
       display: flex !important;
       align-items: center !important;
       gap: 12px !important;
       flex-wrap: wrap !important;
+      width: 100% !important;
     }
 
+    #changelist-search label[for="searchbar"] {
+      display: inline-flex !important;
+      align-items: center !important;
+      margin: 0 !important;
+    }
+
+    #changelist-search label[for="searchbar"] img {
+      width: 16px !important;
+      height: 16px !important;
+      opacity: 0.75 !important;
+    }
+
+    /* Caja de texto de búsqueda: esbelta, altura estándar compacta */
+    #toolbar #searchbar,
     #changelist-search input[type="text"] {
-      min-width: 300px !important;
-      height: 35px !important;
-      padding: 6px 12px !important;
-      font-size: 0.9rem !important;
-    }
-
-    #changelist-search input[type="submit"] {
-      height: 35px !important;
-      padding: 0 18px !important;
+      min-width: 250px !important;
+      max-width: 380px !important;
+      height: 30px !important;
+      line-height: 30px !important;
+      padding: 2px 10px !important;
       font-size: 0.88rem !important;
+      border-radius: 6px !important;
+      box-sizing: border-box !important;
+      vertical-align: middle !important;
     }
 
-    /* Texto de resultados encontrados más visible a la derecha del buscador */
+    /* Botón Buscar: alineado con la misma altura de la caja de texto */
+    #changelist-search input[type="submit"] {
+      height: 30px !important;
+      line-height: 30px !important;
+      padding: 0 16px !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      border-radius: 6px !important;
+      background: var(--admin-btn-primary) !important;
+      color: #ffffff !important;
+      cursor: pointer !important;
+      border: none !important;
+      vertical-align: middle !important;
+      box-sizing: border-box !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    #changelist-search input[type="submit"]:hover {
+      background: var(--admin-btn-primary-hover) !important;
+    }
+
+    /* Texto de resultados encontrados: ¡Notable, más grande y legible! */
     #changelist-search .small.quiet,
     #changelist-search span.small,
     #changelist-search span.quiet {
-      font-size: 0.98rem !important;
+      font-size: 1.05rem !important;
       font-weight: 600 !important;
       color: var(--admin-text-main) !important;
-      margin-left: 8px !important;
+      margin-left: 12px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
     }
 
     #changelist-search .small.quiet a,
+    #changelist-search span.small a,
     #changelist-search span a {
-      color: var(--admin-btn-primary) !important;
-      text-decoration: underline !important;
+      font-size: 1.05rem !important;
       font-weight: 700 !important;
+      color: #38bdf8 !important;
+      text-decoration: underline !important;
     }
 
     /* Ocultar la ficha técnica criptográfica del hash en la edición de usuario */
-    #id_password > p:not(:last-child),
     #id_password > p:first-of-type,
     .field-password #id_password p:has(bdi) {
       display: none !important;
