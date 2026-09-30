@@ -12,7 +12,7 @@ from .forms import ContactoForm
 from .models import Contacto
 
 # ==============================================================================
-# 1. Branding del Panel de Administración (Clase 02U2 - Sección 7)
+# 1. Branding del Panel de Administración 
 # ==============================================================================
 admin.site.site_header = "Agenda de Contactos - Panel de Control"
 admin.site.site_title = "Agenda Contactos Admin"
@@ -23,12 +23,12 @@ delete_selected.short_description = "🗑️ Eliminar contactos seleccionados"
 
 
 # ==============================================================================
-# 2. Acciones Masivas Personalizadas (Clase 02U2 - Sección 3)
+# 2. Acciones Masivas Personalizadas
 # ==============================================================================
 @admin.action(description="📥 Exportar contactos seleccionados a CSV")
 def exportar_contactos_csv(modeladmin, request, queryset):
     """Acción masiva para descargar contactos en archivo CSV compatible con Excel."""
-    response = HttpResponse(
+    response = HttpResponse(    
         content_type='text/csv; charset=utf-8-sig',
         headers={'Content-Disposition': 'attachment; filename="contactos_exportados.csv"'},
     )
@@ -60,7 +60,7 @@ def estandarizar_nombres(modeladmin, request, queryset):
 
 
 # ==============================================================================
-# 3. Filtros Avanzados Personalizados (Clase 02U2 - Sección 4)
+# 3. Filtros Avanzados Personalizados
 # ==============================================================================
 class ProveedorCorreoFilter(SimpleListFilter):
     """Filtro avanzado lateral para clasificar contactos según su proveedor de correo electrónico."""
@@ -97,7 +97,7 @@ class ProveedorCorreoFilter(SimpleListFilter):
 
 
 # ==============================================================================
-# 4. Configuración Principal del Modelo en Admin (Clase 02U2 - Secciones 2, 5 y 6)
+# 4. Configuración Principal del Modelo en Admin
 # ==============================================================================
 @admin.register(Contacto)
 class ContactoAdmin(admin.ModelAdmin):
@@ -190,7 +190,7 @@ class ContactoAdmin(admin.ModelAdmin):
         )
 
 # ==============================================================================
-# 5. Personalizaci?n del Modelo de Usuarios (Diferenciaci?n de Roles Visuales)
+# 5. Personalizaci?n del Modelo de Usuarios (Diferenciaciónde Roles Visuales)
 # ==============================================================================
 if admin.site.is_registered(User):
     admin.site.unregister(User)

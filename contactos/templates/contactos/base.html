@@ -788,6 +788,157 @@
         padding: 24px;
       }
     }
+
+    /* Estilos para integraci?n m?vil vCard */
+    .toolbar-vcard-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px !important;
+      font-size: 0.88rem !important;
+      font-weight: 600 !important;
+      border-radius: var(--radius-sm);
+    }
+    .btn-card-vcard {
+      padding: 6px 12px !important;
+      font-size: 0.82rem !important;
+    }
+    .vcard-guide-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    .vcard-guide-box h3 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+    .vcard-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .vcard-guide-item {
+      background: var(--surface);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .vcard-guide-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--dark);
+    }
+    .vcard-file-input {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: var(--surface);
+      border: 2px dashed var(--border-focus);
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+
+    .emoji-phone {
+      display: inline-block;
+      font-size: 1.15em;
+      line-height: 1;
+      vertical-align: -1px;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+      margin-right: 4px;
+    }
+    .btn-card-vcard {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      font-size: 0.80rem !important;
+      padding: 8px 10px !important;
+      white-space: nowrap;
+    }
+    .btn-vcard-detail {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+
+    /* Boton de descarga estilizado en tono cian/turquesa oscuro del degradado de avatar */
+    .btn-download-vcard {
+      background: linear-gradient(135deg, #00B8D4 0%, #00828f 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      font-size: 0.80rem !important;
+      padding: 7px 12px !important;
+      border-radius: var(--radius-sm) !important;
+      box-shadow: 0 2px 8px rgba(0, 130, 143, 0.28) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      white-space: nowrap !important;
+      text-decoration: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      letter-spacing: -0.01em !important;
+    }
+    .btn-download-vcard:hover {
+      background: linear-gradient(135deg, #00a0b8 0%, #006f7a 100%) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0, 130, 143, 0.4) !important;
+      color: #ffffff !important;
+    }
+
+
+    /* Boton de exportacion en barra flotante con tono cian/turquesa */
+    .btn-bulk-export-cyan {
+      background: linear-gradient(135deg, #00B8D4 0%, #00828f 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      box-shadow: 0 2px 8px rgba(0, 130, 143, 0.28) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .btn-bulk-export-cyan:hover:not(:disabled) {
+      background: linear-gradient(135deg, #00a0b8 0%, #006f7a 100%) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0, 130, 143, 0.4) !important;
+      color: #ffffff !important;
+    }
+    .btn-bulk-export-cyan:disabled {
+      opacity: 0.45 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+
+    /* Boton de descarga individual: oculto por defecto en la lista */
+    .card .btn-download-vcard {
+      display: none !important;
+    }
+
+    /* Se muestra en cada tarjeta solo al activar "Seleccionar todos" */
+    .cards.show-vcard-buttons .card .btn-download-vcard {
+      display: inline-flex !important;
+      animation: fadeIn 0.25s ease-out;
+    }
+
   </style>
 </head>
 

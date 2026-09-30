@@ -15,8 +15,19 @@
       </svg>
     </div>
     <input type="search" name="q" value="{{ query }}" placeholder="Buscar por nombre o correo electrónico..." aria-label="Buscar contactos">
-    <button type="submit">🔍 Buscar</button>
+    <button type="submit">Buscar</button>
   </form>
+
+    <div class="toolbar-vcard-actions">
+    <a class="button secondary btn-mobile" href="{% url 'contacto_vcard_import' %}" title="Importar archivo .vcf del celular a la base de datos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Importar (.vcf)
+    </a>
+  </div>
 </div>
 
 {% if contactos %}
@@ -31,13 +42,24 @@
       </label>
       <span class="bulk-counter" id="selected-counter">0 seleccionados</span>
     </div>
-    <button type="submit" id="btn-bulk-delete" class="button danger sm" disabled>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"></polyline>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-      </svg>
-      Eliminar seleccionados
-    </button>
+
+    <div class="bulk-right" style="display: flex; align-items: center; gap: 8px;">
+      <button type="submit" id="btn-bulk-export" class="button btn-bulk-export-cyan sm" formaction="{% url 'contactos_vcard_export_selected' %}" disabled title="Descargar solo los contactos seleccionados en un archivo .vcf">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Exportar seleccionados (.vcf)
+      </button>
+      <button type="submit" id="btn-bulk-delete" class="button danger sm" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Eliminar seleccionados
+      </button>
+    </div>
   </div>
 
   <div class="cards">
@@ -81,6 +103,7 @@
 
       <div class="card-actions">
         <a class="button secondary" href="{% url 'contacto_detail' contacto.pk %}">Ver detalle</a>
+        <a class="button btn-download-vcard" href="{% url 'contacto_vcard_download' contacto.pk %}" title="Descargar ficha vCard (.vcf)">Descargar (.vcf)</a>
       </div>
     </article>
     {% endfor %}
@@ -112,12 +135,12 @@
     const checkboxes = document.querySelectorAll('.contact-checkbox');
     const counter = document.getElementById('selected-counter');
     const deleteBtn = document.getElementById('btn-bulk-delete');
+    const exportBtn = document.getElementById('btn-bulk-export');
 
     function updateSelection() {
       const selected = Array.from(checkboxes).filter(cb => cb.checked);
       const count = selected.length;
 
-      // Mostrar u ocultar la barra de selección según corresponda
       if (bulkBar) {
         if (count > 0) {
           bulkBar.classList.add('is-visible');
@@ -128,9 +151,18 @@
 
       counter.textContent = `${count} seleccionado${count === 1 ? '' : 's'}`;
       deleteBtn.disabled = count === 0;
+      if (exportBtn) {
+        exportBtn.disabled = count === 0;
+      }
 
-      selectAll.checked = count > 0 && count === checkboxes.length;
+      const allSelected = count > 0 && count === checkboxes.length;
+      selectAll.checked = allSelected;
       selectAll.indeterminate = count > 0 && count < checkboxes.length;
+
+      const cardsContainer = document.querySelector('.cards');
+      if (cardsContainer) {
+        cardsContainer.classList.toggle('show-vcard-buttons', count > 0);
+      }
 
       checkboxes.forEach(cb => {
         const card = document.getElementById(`card-${cb.value}`);
@@ -162,4 +194,3 @@
 </div>
 {% endif %}
 {% endblock %}
-
