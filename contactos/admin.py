@@ -1,8 +1,11 @@
 import csv
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.contrib.admin.actions import delete_selected
 
 from .forms import ContactoForm
@@ -185,3 +188,45 @@ class ContactoAdmin(admin.ModelAdmin):
             obj.correo,
             obj.correo,
         )
+
+# ==============================================================================
+# 5. Personalizaci?n del Modelo de Usuarios (Diferenciaci?n de Roles Visuales)
+# ==============================================================================
+if admin.site.is_registered(User):
+    admin.site.unregister(User)
+
+
+@admin.register(User)
+class CustomUserAdmin(BaseUserAdmin):
+    # Reemplazamos la columna gen?rica 'is_staff' por nuestro badge descriptivo de Rol
+    list_display = ('username', 'email', 'first_name', 'last_name', 'rol_badge', 'is_active')
+    list_filter = ('is_superuser', 'is_staff', 'is_active', 'groups')
+    ordering = ('username',)
+
+    @admin.display(description="Rol / Nivel de acceso", ordering='is_superuser')
+    def rol_badge(self, obj):
+        """Muestra visualmente si el usuario es Superusuario, Staff o Usuario estándar."""
+        if obj.is_superuser:
+            return mark_safe(
+                '<span class="badge-role badge-superuser">👑 Superusuario</span>'
+            )
+        elif obj.is_staff:
+            return mark_safe(
+                '<span class="badge-role badge-staff">🛡️ Staff</span>'
+            )
+        else:
+            return mark_safe(
+                '<span class="badge-role badge-user">👤 Usuario normal</span>'
+            )
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            func, name, _ = actions['delete_selected']
+            actions['delete_selected'] = (func, name, "🗑️ Eliminar usuarios seleccionados")
+        return actions
+
+    def get_action_choices(self, request, default_choices=None):
+        default_choices = [("", "- Selecciona una opción -")]
+        return super().get_action_choices(request, default_choices=default_choices)
+
