@@ -190,7 +190,7 @@ class ContactoAdmin(admin.ModelAdmin):
         )
 
 # ==============================================================================
-# 5. Personalizaci?n del Modelo de Usuarios (Diferenciaciónde Roles Visuales)
+# 5. Personalización del Modelo de Usuarios (Diferenciación de Roles Visuales)
 # ==============================================================================
 if admin.site.is_registered(User):
     admin.site.unregister(User)
@@ -198,7 +198,7 @@ if admin.site.is_registered(User):
 
 @admin.register(User)
 class CustomUserAdmin(BaseUserAdmin):
-    # Reemplazamos la columna gen?rica 'is_staff' por nuestro badge descriptivo de Rol
+    # Reemplazamos la columna genérica 'is_staff' por nuestro badge descriptivo de Rol
     list_display = ('username', 'email', 'first_name', 'last_name', 'rol_badge', 'is_active')
     list_filter = ('is_superuser', 'is_staff', 'is_active', 'groups')
     ordering = ('username',)

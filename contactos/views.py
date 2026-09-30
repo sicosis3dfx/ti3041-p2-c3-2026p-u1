@@ -9,7 +9,7 @@ from .forms import ContactoForm
 from .models import Contacto
 
 
-# Vista para listar contactos con b?squeda y paginaci?n
+# Vista para listar contactos con búsqueda y paginación
 def contacto_list(request):
     query = request.GET.get('q', '').strip()
     contactos_qs = Contacto.objects.all().order_by('nombre')
@@ -19,7 +19,7 @@ def contacto_list(request):
             Q(nombre__icontains=query) | Q(correo__icontains=query)
         )
 
-    # Paginaci?n: 8 contactos por p?gina (conforme a indicadores de evaluaci?n)
+    # Paginación: 8 contactos por página (conforme a indicadores de evaluación)
     paginator = Paginator(contactos_qs, 8)
     page_number = request.GET.get('page')
     contactos = paginator.get_page(page_number)
@@ -65,7 +65,7 @@ def contacto_update(request, pk):
     })
 
 
-# Vista para borrar un contacto con confirmaci?n
+# Vista para borrar un contacto con confirmación
 def contacto_delete(request, pk):
     contacto = get_object_or_404(Contacto, pk=pk)
 
@@ -78,7 +78,7 @@ def contacto_delete(request, pk):
     return render(request, 'contactos/contacto_confirm_delete.html', {'contacto': contacto})
 
 
-# Vista para borrar m?ltiples contactos con confirmaci?n previa
+# Vista para borrar múltiples contactos con confirmación previa
 def contacto_bulk_delete(request):
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_ids')
@@ -105,11 +105,11 @@ def contacto_bulk_delete(request):
 
 
 # ==============================================================================
-# INTEGRACI?N M?VIL H?BRIDA (vCard .vcf de ida y vuelta)
+# INTEGRACIÓN MÓVIL HÍBRIDA (vCard .vcf de ida y vuelta)
 # ==============================================================================
 
 def _build_vcard_entry(c):
-    """Genera la estructura est?ndar vCard 3.0 para un contacto."""
+    """Genera la estructura estándar vCard 3.0 para un contacto."""
     lines = [
         "BEGIN:VCARD",
         "VERSION:3.0",
@@ -161,7 +161,7 @@ def contactos_vcard_export_selected(request):
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_ids')
         if not selected_ids:
-            messages.warning(request, "No seleccionaste ning?n contacto para exportar.")
+            messages.warning(request, "No seleccionaste ningún contacto para exportar.")
             return redirect('contacto_list')
 
         contactos = Contacto.objects.filter(pk__in=selected_ids).order_by('nombre')
@@ -184,7 +184,7 @@ def contacto_vcard_import(request):
             return render(request, 'contactos/contacto_import_vcf.html')
 
         if not archivo.name.lower().endswith('.vcf'):
-            messages.error(request, "El archivo debe tener extensi?n .vcf (formato vCard).")
+            messages.error(request, "El archivo debe tener extensión .vcf (formato vCard).")
             return render(request, 'contactos/contacto_import_vcf.html')
 
         try:
@@ -194,7 +194,7 @@ def contacto_vcard_import(request):
             except UnicodeDecodeError:
                 content = raw_content.decode('iso-8859-1', errors='ignore')
 
-            # Desplegar l?neas continuadas (folding vCard)
+            # Desplegar líneas continuadas (folding vCard)
             unfolded = []
             for line in content.splitlines():
                 if line.startswith((' ', '\t')) and unfolded:
@@ -268,12 +268,12 @@ def contacto_vcard_import(request):
             elif duplicados > 0:
                 messages.info(request, f"Todos los contactos del archivo ({duplicados}) ya existen en tu agenda.")
             else:
-                messages.warning(request, "No se encontraron contactos v?lidos en el archivo vCard subido.")
+                messages.warning(request, "No se encontraron contactos válidos en el archivo vCard subido.")
 
             return redirect('contacto_list')
 
         except Exception as e:
-            messages.error(request, f"Ocurri? un error al procesar el archivo vCard: {str(e)}")
+            messages.error(request, f"Ocurrió un error al procesar el archivo vCard: {str(e)}")
             return render(request, 'contactos/contacto_import_vcf.html')
 
     return render(request, 'contactos/contacto_import_vcf.html')
