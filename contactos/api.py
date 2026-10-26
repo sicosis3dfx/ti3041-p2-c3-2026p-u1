@@ -8,4 +8,4 @@ class ContactoViewSet(viewsets.ModelViewSet):
     serializer_class = ContactoSerializer
 
 router = routers.DefaultRouter()
-router.register(r'contactos', ProductoViewSet)
+router.register(r'contactos', ContactoViewSet)
